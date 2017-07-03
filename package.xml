@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ekumen_technical_exercise</name>
+  <version>0.1.0</version>
+  <description>Makes turtlesim follow specific paths and drawing them on the screen, and also, in a web browser.</description>
+  <maintainer email="emiliano.borghi@gmail.com">Emiliano Borghi</maintainer>
+  <license>BSD</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  
+</package>
