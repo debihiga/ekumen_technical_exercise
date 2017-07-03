@@ -1,0 +1,8 @@
+# goal : path - sequence of 2D points
+geometry_msgs/Pose2D[] pose
+---
+# result
+actionlib_msgs/GoalStatus result
+---
+# feedback : percentage of the distance traveled by the turtle
+float32 progress

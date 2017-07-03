@@ -8,10 +8,26 @@ add_definitions(--std=c++11)
 find_package(catkin REQUIRED
   COMPONENTS
     roscpp
+    actionlib_msgs
+    geometry_msgs
+    std_msgs
     roslaunch
 )
 
 roslaunch_add_file_check(launch)
+
+
+add_action_files(
+	DIRECTORY action
+	FILES Turtle.action
+)
+
+generate_messages(
+	DEPENDENCIES
+		actionlib_msgs	# result
+		geometry_msgs	# goal
+		std_msgs		# feedback
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -27,6 +43,7 @@ catkin_package(
     include
 #  LIBRARIES
   CATKIN_DEPENDS
+  	actionlib_msgs
 #  DEPENDS
 )
 
@@ -41,15 +58,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a cpp library
-#add_library(${PROJECT_NAME}_core
-#   src/Algorithm.cpp
-#)
-
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
-  src/${PROJECT_NAME}_node.cpp
-#  src/RosPackageTemplate.cpp
+  src/turtle_server.cpp
 )
 
 ## Specify libraries to link executable targets against
@@ -60,11 +71,6 @@ target_link_libraries(${PROJECT_NAME}
 add_dependencies(${PROJECT_NAME}
   ${PROJECT_NAME}_EXPORTED_TARGETS
   ${catkin_EXPORTED_TARGETS})
-
-#target_link_libraries(${PROJECT_NAME}
-#  ${PROJECT_NAME}_core
-#  ${catkin_LIBRARIES}
-#)
 
 #############
 ## Install ##

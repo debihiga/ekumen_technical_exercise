@@ -46,9 +46,9 @@ Run the package with
 
 The following description will be edited when the package works fine.
 
-### NODE A
+### turtlesim_node
 
-Description.
+turtlesim is a tool made for teaching ROS and ROS packages.
 
 
 #### Subscribed Topics
