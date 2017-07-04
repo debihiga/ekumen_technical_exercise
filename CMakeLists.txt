@@ -8,7 +8,9 @@ add_definitions(--std=c++11)
 find_package(catkin REQUIRED
   COMPONENTS
     roscpp
+    actionlib
     actionlib_msgs
+    message_generation
     geometry_msgs
     std_msgs
     roslaunch
@@ -43,8 +45,13 @@ catkin_package(
     include
 #  LIBRARIES
   CATKIN_DEPENDS
+  	actionlib
   	actionlib_msgs
-#  DEPENDS
+  	message_generation
+  	roscpp
+  	std_msgs
+  DEPENDS
+  	roscpp
 )
 
 ###########
@@ -59,17 +66,24 @@ include_directories(
 )
 
 ## Declare cpp executables
-add_executable(${PROJECT_NAME}
+add_executable(turtle_server
   src/turtle_server.cpp
 )
 
+
 ## Specify libraries to link executable targets against
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(turtle_server
   ${catkin_LIBRARIES}
 )
 
-add_dependencies(${PROJECT_NAME}
+add_dependencies(turtle_server
   ${PROJECT_NAME}_EXPORTED_TARGETS
+  ${catkin_EXPORTED_TARGETS})
+
+
+add_executable(turtle_client src/turtle_client.cpp)
+target_link_libraries(turtle_client ${catkin_LIBRARIES})
+add_dependencies(turtle_client ${PROJECT_NAME}_EXPORTED_TARGETS
   ${catkin_EXPORTED_TARGETS})
 
 #############
@@ -77,19 +91,19 @@ add_dependencies(${PROJECT_NAME}
 #############
 
 # Mark executables and/or libraries for installation
-install(
-  TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#install(
+#  TARGETS ${PROJECT_NAME}
+#  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#)
 
 # Mark cpp header files for installation
-install(
-  DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.hpp"
-)
+#install(
+#  DIRECTORY include/${PROJECT_NAME}/
+#  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#  FILES_MATCHING PATTERN "*.hpp"
+#)
 
 # Mark other files for installation
 install(

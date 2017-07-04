@@ -7,4 +7,10 @@
 		name="turtlesim_node"
 		output="screen" />
 
+	<node
+		pkg="ekumen_technical_exercise"
+		type="turtle_server"
+		name="turtle_server"
+		output="screen" />
+
 </launch>

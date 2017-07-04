@@ -1,16 +1,18 @@
-#include <ros/ros.h>
-//#include "ekumen_technical_exercise/ekumen_technical_exercise.hpp"
+
+#include "ekumen_technical_exercise/turtle_server.hpp"
+
+void TurtleServer::executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr &goal) {
+	// TODO
+	ROS_INFO("\n> executeCb()\n");
+}
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "ekumen_technical_exercise");
-  ros::NodeHandle nodeHandle("~");
-  //ros::NodeHandle n;
+  ros::init(argc, argv, "turtle_server_node");
 
-  //ekumen_technical_exercise::RosPackageTemplate rosPackageTemplate(nodeHandle);
-  while(ros::ok()) {
-  	
-  	ros::spin();
-  }
+  TurtleServer turtle_server("turtle_server");
+
+  ros::spin();
+  
   return 0;
 }

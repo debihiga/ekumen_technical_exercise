@@ -1,0 +1,10 @@
+<launch>
+
+	<!-- Launch action client test -->
+	<node
+		pkg="ekumen_technical_exercise"
+		type="turtle_client"
+		name="turtle_client"
+		output="screen" />
+
+</launch>
