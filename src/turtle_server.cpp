@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "turtle_server_node");
 
-  TurtleServer turtle_server("turtle_server");
+  TurtleServer server(ros::this_node::getName());
 
   ros::spin();
   

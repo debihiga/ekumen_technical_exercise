@@ -29,7 +29,7 @@ TurtleClient::TurtleClient()
 
 TurtleClient::TurtleClient(std::string name)
 : actionName(name),
-  ac("turtle_client", true) {
+  ac("turtle_action", true) {
 
   	// Get connection to a server
 	ROS_INFO("%s Waiting For Server...", actionName.c_str());

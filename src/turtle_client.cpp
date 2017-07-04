@@ -61,11 +61,9 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "turtle_client_test_node");
 
   // Create the action client
-  TurtleClient client("turtle_client_test");
+  TurtleClient client(ros::this_node::getName());
 
   client.setGoal();
-
-  ros::spin();
 
   //exit
   return 0;

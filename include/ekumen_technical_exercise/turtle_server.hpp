@@ -28,7 +28,7 @@ TurtleServer::TurtleServer()
 
 TurtleServer::TurtleServer(std::string name)
 : as(nh, 							// node handle
-	name, 							// action server name
+	"turtle_action", 							// action server name
 	boost::bind(
 		&TurtleServer::executeCb, 	// is executed when a goal is received
 		this, 
