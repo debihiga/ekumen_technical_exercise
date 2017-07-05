@@ -10,6 +10,7 @@
   
   <depend>roscpp</depend>
   <depend>message_generation</depend>
+  <depend>dynamic_reconfigure</depend>
   <depend>geometry_msgs</depend>
   <depend>std_msgs</depend>
   <depend>turtlesim</depend>

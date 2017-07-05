@@ -34,13 +34,13 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
 
 		// Implements a proportional controller
 		// Linear velocity
-		state == RESUME ? velMsg.linear.x = this->K_dist * TurtleServer::getDistance(pose) : velMsg.linear.x = 0;
+		state == RESUME ? velMsg.linear.x = this->maxVel * TurtleServer::getDistance(pose) : velMsg.linear.x = 0;
 		
 		// Publish velocity
 		twistPub.publish(velMsg);
 
 		feedback.progress = (min_progress - TurtleServer::getDistance(pose) / maxDistance)*100;
-		state == RESUME ? feedback.state = "RESUME" : feedback.state = "PAUSE";
+		state == RESUME ? feedback.state = "RUNNING" : feedback.state = "PAUSE";
 		as.publishFeedback(feedback);
 
 		// Check for ROS kill
@@ -89,12 +89,11 @@ void TurtleServer::executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr
 		ROS_ERROR("\nPath received with no length\n");
 	}
 
-	ROS_INFO("> Publishing result...\n");
 	// Publish the result if the goal wasn't preempted
 	result.result = success;
 	if (success) {
 		feedback.progress = 100.00;
-		feedback.state = "FINISHED";
+		feedback.state = "PATH COMPLETED";
 		as.publishFeedback(feedback);
 		as.setSucceeded(result);
 	} else {

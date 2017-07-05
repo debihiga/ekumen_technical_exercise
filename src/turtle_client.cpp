@@ -24,7 +24,6 @@ void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackCon
 void TurtleClient::setGoal() {
 
 	// send a goal to the action
-	std::vector<turtlesim::Pose> _pose_v;
 	turtlesim::Pose _pose;
 	/*
 	_pose.x = 0;

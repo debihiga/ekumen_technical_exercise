@@ -1,8 +1,13 @@
 #pragma once
 
 #include <ros/ros.h>
+
 #include <actionlib/server/simple_action_server.h>
 #include <ekumen_technical_exercise/TurtleAction.h>
+// Dynamic reconfigure includes
+#include <dynamic_reconfigure/server.h>
+// Auto-generated from cfg/ directory
+#include <ekumen_technical_exercise/turtleMaxVelocityConfig.h>
 
 #include <turtlesim/Pose.h>
 #include <geometry_msgs/Twist.h>
@@ -30,9 +35,10 @@ protected:
 	ros::Publisher twistPub;
 	ros::ServiceServer srvPause;
 	ros::ServiceServer srvResume;
+	dynamic_reconfigure::Server<ekumen_technical_exercise::turtleMaxVelocityConfig> server;
+	dynamic_reconfigure::Server<ekumen_technical_exercise::turtleMaxVelocityConfig>::CallbackType cb;
+	double maxVel;
 	double tolerance;
-	double K_dist;
-	double K_ang;
 	simState state;
 public:
 	// Constructor & destructor
@@ -43,6 +49,7 @@ public:
 	void turtlePoseCb(const turtlesim::Pose::ConstPtr&);
 	bool resumeCb(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
 	bool pauseCb(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
+	void dynamicReconfigureCb(ekumen_technical_exercise::turtleMaxVelocityConfig&, double_t);
 	// Functions
 	double getDistance(turtlesim::Pose&);
 	double getAngleDiff(turtlesim::Pose&);
@@ -63,9 +70,9 @@ TurtleServer::TurtleServer(std::string name)
 	false),							// auto start
 actionName(name),
 tolerance(0.1),
-K_dist(1.25),
-K_ang(4),
-state(RESUME) {
+state(RESUME),
+cb(boost::bind(&TurtleServer::dynamicReconfigureCb, this, _1, _2)),
+maxVel(1.0) {
 
 	as.start(); // auto_start = false
 
@@ -78,6 +85,9 @@ state(RESUME) {
 	// Services
 	srvResume = nh.advertiseService("/resume", &TurtleServer::resumeCb, this);
 	srvPause = nh.advertiseService("/pause", &TurtleServer::pauseCb, this);
+
+	// Dynamic reconfigure
+	server.setCallback(cb);
 }
 
 double TurtleServer::getDistance(turtlesim::Pose &pose) {
@@ -120,5 +130,24 @@ bool TurtleServer::pauseCb(
 	std_srvs::Empty::Response &res) {
 	
 	state = PAUSE;
+
+	geometry_msgs::Twist velMsg;
+	velMsg.linear.x = 0;
+	velMsg.linear.y = 0;
+	velMsg.linear.z = 0;
+	velMsg.angular.x = 0;
+	velMsg.angular.y = 0;
+	velMsg.angular.z = 0;
+	twistPub.publish(velMsg);
+
 	return true;
+}
+
+
+void TurtleServer::dynamicReconfigureCb(
+	ekumen_technical_exercise::turtleMaxVelocityConfig &config, 
+	double_t level) 	// level parameter in cfg file
+{	
+	this->maxVel = config.max_vel;
+	ROS_INFO("Reconfigure Request: %f", config.max_vel);
 }

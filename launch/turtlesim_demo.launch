@@ -7,10 +7,18 @@
 		name="turtlesim_node"
 		output="screen" />
 
+	<!-- Action server -->
 	<node
 		pkg="ekumen_technical_exercise"
 		type="turtle_server"
 		name="turtle_server"
 		output="screen" />
+
+	<!-- Dynamic reconfigure of Turtlesim velocity -->
+	<node 
+		pkg="rqt_reconfigure" 
+		name="rqt_reconfigure" 
+		type="rqt_reconfigure"
+		required="false" />
 
 </launch>

@@ -15,6 +15,7 @@ find_package(catkin REQUIRED
     turtlesim
     std_msgs
     roslaunch
+    dynamic_reconfigure
 )
 
 roslaunch_add_file_check(launch)
@@ -23,6 +24,11 @@ roslaunch_add_file_check(launch)
 add_action_files(
 	DIRECTORY action
 	FILES Turtle.action
+)
+
+#add dynamic reconfigure api
+generate_dynamic_reconfigure_options(
+	cfg/turtlesim_velocity.cfg
 )
 
 generate_messages(
@@ -72,7 +78,8 @@ include_directories(
 add_executable(turtle_server src/turtle_server.cpp)
 ## Specify libraries to link executable targets against
 target_link_libraries(turtle_server ${catkin_LIBRARIES})
-add_dependencies(turtle_server ${catkin_EXPORTED_TARGETS})
+## Make sure configure headers are built before any node using them
+add_dependencies(turtle_server ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
 
 add_executable(turtle_client src/turtle_client.cpp)
 target_link_libraries(turtle_client ${catkin_LIBRARIES})
