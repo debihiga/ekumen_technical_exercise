@@ -18,16 +18,12 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
 	velMsg.angular.z = 0;
 
 	double targetAngle = TurtleServer::getAngleDiff(pose);
-	//ROS_INFO("[targetAngle] : %f\n", targetAngle);
-	//ROS_INFO("[theta] : %f\n", this->pose.theta);
 
 	while( fabsf(targetAngle - this->pose.theta) > 0.017) {
 
-		velMsg.angular.z = 0.4;//this->K_ang * angleDiff;
+		state == RESUME ? velMsg.angular.z = 0.4 : velMsg.angular.z = 0;
+		//this->K_ang * (targetAngle-this->pose.theta);
 		twistPub.publish(velMsg);
-		//angleDiff = TurtleServer::getAngleDiff(pose);
-		//ROS_INFO("\n[theta] : %f\n", this->pose.theta);
-
 	}
 
 	velMsg.angular.z = 0;
@@ -38,7 +34,7 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
 
 		// Implements a proportional controller
 		// Linear velocity
-		velMsg.linear.x = this->K_dist * TurtleServer::getDistance(pose);
+		state == RESUME ? velMsg.linear.x = this->K_dist * TurtleServer::getDistance(pose) : velMsg.linear.x = 0;
 		
 		// Publish velocity
 		twistPub.publish(velMsg);

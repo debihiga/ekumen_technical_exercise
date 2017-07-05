@@ -7,8 +7,15 @@
 #include <turtlesim/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Vector3.h>
+#include <std_srvs/Empty.h>
 
 #define PI 3.14159265
+
+enum simState
+{
+	PAUSE,
+	RESUME
+};
 
 class TurtleServer
 {
@@ -21,9 +28,12 @@ protected:
 	turtlesim::Pose pose;
 	ros::Subscriber poseSub;
 	ros::Publisher twistPub;
+	ros::ServiceServer srvPause;
+	ros::ServiceServer srvResume;
 	double tolerance;
 	double K_dist;
 	double K_ang;
+	simState state;
 public:
 	// Constructor & destructor
 	TurtleServer();
@@ -31,6 +41,8 @@ public:
 	// Callback
 	void executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr&);
 	void turtlePoseCb(const turtlesim::Pose::ConstPtr&);
+	void resume(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
+	void pause(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
 	// Functions
 	double getDistance(turtlesim::Pose&);
 	double getAngleDiff(turtlesim::Pose&);
@@ -52,14 +64,20 @@ TurtleServer::TurtleServer(std::string name)
 actionName(name),
 tolerance(0.1),
 K_dist(1.25),
-K_ang(4) {
+K_ang(4),
+state(RESUME) {
 
 	as.start(); // auto_start = false
 
 	ROS_INFO("\nAction Server started\n");
 
+	// Topics
 	poseSub = nh.subscribe("/turtle1/pose", 1, &TurtleServer::turtlePoseCb, this);
 	twistPub = nh.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel",1);
+
+	// Services
+	srvResume = nh.advertiseService("resume", &TurtleServer::resume);
+	srvPause = nh.advertiseService("pause", &TurtleServer::pause);
 }
 
 double TurtleServer::getDistance(turtlesim::Pose &pose) {
@@ -87,4 +105,18 @@ void TurtleServer::turtlePoseCb(const turtlesim::Pose::ConstPtr& msg) {
 	this->pose.x = msg->x;
 	this->pose.y = msg->y;
 	this->pose.theta = TurtleServer::wrapAngle(msg->theta);
+}
+
+void TurtleServer::resume(
+	std_srvs::Empty::Request &req, 
+	std_srvs::Empty::Response &res) {
+	
+	state = RESUME;
+}
+	
+void TurtleServer::pause(
+	std_srvs::Empty::Request &req, 
+	std_srvs::Empty::Response &res) {
+	
+	state = PAUSE;
 }

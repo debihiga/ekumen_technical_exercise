@@ -15,6 +15,7 @@ find_package(catkin REQUIRED
     turtlesim
     std_msgs
     roslaunch
+    std_srvs
 )
 
 roslaunch_add_file_check(launch)
@@ -53,6 +54,7 @@ catkin_package(
   	roscpp
   	std_msgs
   	turtlesim
+  	std_srvs
   DEPENDS
   	roscpp
 )
@@ -88,6 +90,14 @@ add_executable(turtle_client src/turtle_client.cpp)
 target_link_libraries(turtle_client ${catkin_LIBRARIES})
 add_dependencies(turtle_client ${PROJECT_NAME}_EXPORTED_TARGETS
   ${catkin_EXPORTED_TARGETS})
+
+add_executable(resume_turtle_srv src/resume_turtle.cpp)
+target_link_libraries(resume_turtle_srv ${catkin_LIBRARIES})
+#add_dependencies(resume_turtle_srv ${PROJECT_NAME}_gencpp)
+
+add_executable(pause_turtle_srv src/pause_turtle.cpp)
+target_link_libraries(pause_turtle_srv ${catkin_LIBRARIES})
+#add_dependencies(pause_turtle_srv ${PROJECT_NAME}_gencpp)
 
 #############
 ## Install ##
