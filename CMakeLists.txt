@@ -12,6 +12,7 @@ find_package(catkin REQUIRED
     actionlib_msgs
     message_generation
     geometry_msgs
+    turtlesim
     std_msgs
     roslaunch
 )
@@ -29,6 +30,7 @@ generate_messages(
 		actionlib_msgs	# result
 		geometry_msgs	# goal
 		std_msgs		# feedback
+		turtlesim
 )
 
 ###################################
@@ -50,6 +52,7 @@ catkin_package(
   	message_generation
   	roscpp
   	std_msgs
+  	turtlesim
   DEPENDS
   	roscpp
 )

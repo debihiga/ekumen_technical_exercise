@@ -1,6 +1,6 @@
 # goal : path - sequence of 2D points
-geometry_msgs/Pose2D[] pose
-#geometry_msgs/Pose2D pose
+turtlesim/Pose[] pose
+uint8 path_length
 ---
 # result
 bool result

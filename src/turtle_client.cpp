@@ -9,33 +9,35 @@ void TurtleClient::doneCb(
 	
 	//ROS_INFO("Finished in state [%s]", state.toString().c_str());
 	//ROS_INFO("Result: %d", result->ok);
-	ROS_INFO("\ndoneCb()\n");
+	ROS_INFO("doneCb()\n");
 }
 
 void TurtleClient::activeCb() {
 // Called once when the goal becomes active
-	ROS_INFO("\nPerforming path\n");
+	ROS_INFO("Performing path\n");
 }
 
 void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackConstPtr& feedback) {
-	ROS_INFO("\nprogress: %f\n", feedback->progress);
+	ROS_INFO("progress: %f\n", feedback->progress);
 }
 
 void TurtleClient::setGoal() {
 
 	// send a goal to the action
-	std::vector<geometry_msgs::Pose2D> _pose_v;
-	geometry_msgs::Pose2D _pose;
-	
+	std::vector<turtlesim::Pose> _pose_v;
+	turtlesim::Pose _pose;
+	/*
 	_pose.x = 0;
 	_pose.y = 0;
 	_pose.theta = 0;
 	goal.pose.push_back(_pose);
-
-	_pose.x = 5;
-	_pose.y = 5;
+	*/
+	_pose.x = 5.55;
+	_pose.y = 8;
 	_pose.theta = 0;
 	goal.pose.push_back(_pose);	
+
+	goal.path_length = goal.pose.size();
 
 	ac.sendGoal(
 		goal,
@@ -64,6 +66,8 @@ int main(int argc, char** argv)
   TurtleClient client(ros::this_node::getName());
 
   client.setGoal();
+
+  ros::spin();
 
   //exit
   return 0;

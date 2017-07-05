@@ -4,7 +4,7 @@
 #include <ekumen_technical_exercise/TurtleAction.h>
 #include <actionlib/client/simple_action_client.h>
 
-#include <geometry_msgs/Pose2D.h>
+#include <turtlesim/Pose.h>
 
 
 class TurtleClient
