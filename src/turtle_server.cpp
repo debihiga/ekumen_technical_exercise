@@ -21,7 +21,7 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
 
 	while( fabsf(targetAngle - this->pose.theta) > 0.017) {
 
-		state == RESUME ? velMsg.angular.z = 0.4 : velMsg.angular.z = 0;
+		state == RESUME ? velMsg.angular.z = this->angVel * (fabsf(targetAngle - this->pose.theta)) : velMsg.angular.z = 0;
 		//this->K_ang * (targetAngle-this->pose.theta);
 		twistPub.publish(velMsg);
 	}

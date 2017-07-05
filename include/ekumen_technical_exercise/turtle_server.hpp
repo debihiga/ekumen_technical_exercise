@@ -38,6 +38,7 @@ protected:
 	dynamic_reconfigure::Server<ekumen_technical_exercise::turtleMaxVelocityConfig> server;
 	dynamic_reconfigure::Server<ekumen_technical_exercise::turtleMaxVelocityConfig>::CallbackType cb;
 	double maxVel;
+	double angVel;
 	double tolerance;
 	simState state;
 public:
@@ -72,7 +73,8 @@ actionName(name),
 tolerance(0.1),
 state(RESUME),
 cb(boost::bind(&TurtleServer::dynamicReconfigureCb, this, _1, _2)),
-maxVel(1.0) {
+maxVel(1.0),
+angVel(0.4) {
 
 	as.start(); // auto_start = false
 
@@ -149,5 +151,7 @@ void TurtleServer::dynamicReconfigureCb(
 	double_t level) 	// level parameter in cfg file
 {	
 	this->maxVel = config.max_vel;
-	ROS_INFO("Reconfigure Request: %f", config.max_vel);
+	this->angVel = config.ang_vel;
+
+	ROS_INFO("Reconfigure Request: [%f, %f]", config.max_vel, config.ang_vel);
 }
