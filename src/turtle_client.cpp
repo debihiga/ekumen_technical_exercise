@@ -9,16 +9,16 @@ void TurtleClient::doneCb(
 	
 	//ROS_INFO("Finished in state [%s]", state.toString().c_str());
 	//ROS_INFO("Result: %d", result->ok);
-	ROS_INFO("doneCb()\n");
+	ROS_INFO("> Reached goal\n");
 }
 
 void TurtleClient::activeCb() {
 // Called once when the goal becomes active
-	ROS_INFO("Performing path\n");
+	ROS_INFO("> Performing path\n");
 }
 
 void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackConstPtr& feedback) {
-	ROS_INFO("progress: %f\n", feedback->progress);
+	ROS_INFO("progress: %.2f\n", feedback->progress);
 }
 
 void TurtleClient::setGoal() {

@@ -50,7 +50,7 @@ TurtleServer::TurtleServer(std::string name)
 		_1), 
 	false),							// auto start
 actionName(name),
-tolerance(0.05),
+tolerance(0.1),
 K_dist(1.25),
 K_ang(4) {
 
