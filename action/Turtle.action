@@ -7,3 +7,4 @@ bool result
 ---
 # feedback : percentage of the distance traveled by the turtle
 float32 progress
+string state

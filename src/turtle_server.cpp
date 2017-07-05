@@ -40,6 +40,7 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
 		twistPub.publish(velMsg);
 
 		feedback.progress = (min_progress - TurtleServer::getDistance(pose) / maxDistance)*100;
+		state == RESUME ? feedback.state = "RESUME" : feedback.state = "PAUSE";
 		as.publishFeedback(feedback);
 
 		// Check for ROS kill
@@ -93,6 +94,7 @@ void TurtleServer::executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr
 	result.result = success;
 	if (success) {
 		feedback.progress = 100.00;
+		feedback.state = "FINISHED";
 		as.publishFeedback(feedback);
 		as.setSucceeded(result);
 	} else {

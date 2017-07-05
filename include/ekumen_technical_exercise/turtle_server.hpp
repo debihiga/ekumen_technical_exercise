@@ -41,8 +41,8 @@ public:
 	// Callback
 	void executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr&);
 	void turtlePoseCb(const turtlesim::Pose::ConstPtr&);
-	void resume(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
-	void pause(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
+	bool resumeCb(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
+	bool pauseCb(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
 	// Functions
 	double getDistance(turtlesim::Pose&);
 	double getAngleDiff(turtlesim::Pose&);
@@ -76,8 +76,8 @@ state(RESUME) {
 	twistPub = nh.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel",1);
 
 	// Services
-	srvResume = nh.advertiseService("resume", &TurtleServer::resume);
-	srvPause = nh.advertiseService("pause", &TurtleServer::pause);
+	srvResume = nh.advertiseService("/resume", &TurtleServer::resumeCb, this);
+	srvPause = nh.advertiseService("/pause", &TurtleServer::pauseCb, this);
 }
 
 double TurtleServer::getDistance(turtlesim::Pose &pose) {
@@ -107,16 +107,18 @@ void TurtleServer::turtlePoseCb(const turtlesim::Pose::ConstPtr& msg) {
 	this->pose.theta = TurtleServer::wrapAngle(msg->theta);
 }
 
-void TurtleServer::resume(
+bool TurtleServer::resumeCb(
 	std_srvs::Empty::Request &req, 
 	std_srvs::Empty::Response &res) {
 	
 	state = RESUME;
+	return true;
 }
 	
-void TurtleServer::pause(
+bool TurtleServer::pauseCb(
 	std_srvs::Empty::Request &req, 
 	std_srvs::Empty::Response &res) {
 	
 	state = PAUSE;
+	return true;
 }
