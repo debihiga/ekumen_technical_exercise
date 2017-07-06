@@ -40,6 +40,7 @@ protected:
 	double maxVel;
 	double angVel;
 	double tolerance;
+	double angTol;
 	simState state;
 public:
 	// Constructor & destructor
@@ -69,12 +70,13 @@ TurtleServer::TurtleServer(std::string name)
 		this, 
 		_1), 
 	false),							// auto start
-actionName(name),
-tolerance(0.1),
-state(RESUME),
-cb(boost::bind(&TurtleServer::dynamicReconfigureCb, this, _1, _2)),
-maxVel(1.0),
-angVel(0.4) {
+  actionName(name),
+  tolerance(0.3),
+  state(RESUME),
+  cb(boost::bind(&TurtleServer::dynamicReconfigureCb, this, _1, _2)),
+  maxVel(1.0),
+  angVel(0.4),
+  angTol(0.001) {
 
 	as.start(); // auto_start = false
 
@@ -100,10 +102,14 @@ double TurtleServer::getDistance(turtlesim::Pose &pose) {
 }
 
 double TurtleServer::getAngleDiff(turtlesim::Pose& pose) {
-	return std::atan2(
-		(pose.y - this->pose.y),
-		(pose.x - this->pose.x))
-		- this->pose.theta;
+	double angle =  std::atan2(
+		(pose.y - this->pose.y), (pose.x - this->pose.x));
+	// Converts from [-PI;PI] to [0;2*PI]
+	if (angle < 0) angle = 2*PI + angle;
+	// Set maximum value
+	if (angle > 2*PI) angle = 2*PI;
+
+	return angle;
 }
 
 double TurtleServer::wrapAngle(double angle) {

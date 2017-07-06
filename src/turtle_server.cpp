@@ -6,9 +6,6 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
 
 	ros::topic::waitForMessage<turtlesim::Pose>("/turtle1/pose");
 
-	ROS_INFO("\nTurtle going from [%f,%f] to [%f,%f]\n",
-		this->pose.x,this->pose.y,pose.x,pose.y);
-
 	geometry_msgs::Twist velMsg;
 	velMsg.linear.x = 0;
 	velMsg.linear.y = 0;
@@ -19,10 +16,14 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
 
 	double targetAngle = TurtleServer::getAngleDiff(pose);
 
-	while( fabsf(targetAngle - this->pose.theta) > 0.017) {
+	ROS_INFO("\nTurtle going from [%f,%f,%f] to [%f,%f,%f]\n",
+		this->pose.x, this->pose.y, this->pose.theta,
+		pose.x, pose.y, targetAngle);
+
+	while( fabs(targetAngle - this->pose.theta) > angTol) {
 
 		state == RESUME ? velMsg.angular.z = this->angVel * (fabsf(targetAngle - this->pose.theta)) : velMsg.angular.z = 0;
-		//this->K_ang * (targetAngle-this->pose.theta);
+		
 		twistPub.publish(velMsg);
 	}
 

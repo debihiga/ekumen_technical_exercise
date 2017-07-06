@@ -15,9 +15,9 @@ public:
 	// Functions
 	void setGoal();
 private:
+	ros::NodeHandle nh;
 	actionlib::SimpleActionClient<ekumen_technical_exercise::TurtleAction> ac;
 	std::string actionName;
-	ekumen_technical_exercise::TurtleGoal goal;
 	// Callback
 	void doneCb(const actionlib::SimpleClientGoalState&, const ekumen_technical_exercise::TurtleResultConstPtr&);
 	void activeCb();
@@ -28,7 +28,8 @@ TurtleClient::TurtleClient()
 : TurtleClient::TurtleClient("turtle_client_test") {}
 
 TurtleClient::TurtleClient(std::string name)
-: actionName(name),
+: nh("~"),
+  actionName(name),
   ac("turtle_action", true) {
 
   	// Get connection to a server

@@ -22,38 +22,42 @@ void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackCon
 }
 
 void TurtleClient::setGoal() {
-
+	
 	// send a goal to the action
+	ekumen_technical_exercise::TurtleGoal goal;
 	turtlesim::Pose _pose;
-	/*
-	_pose.x = 0;
-	_pose.y = 0;
-	_pose.theta = 0;
-	goal.pose.push_back(_pose);
-	*/
-	_pose.x = 5.55;
-	_pose.y = 8;
-	_pose.theta = 0;
-	goal.pose.push_back(_pose);	
+	
+	double numNodes;
+	if(!nh.getParam("/turtle_client/num_nodes", numNodes)) {
+		ROS_ERROR("> Error retrieving path parameters : %f", numNodes);
+		return;
+	} else {
+		ROS_INFO("> Nodes found : %f\n", numNodes);
+	}
+	
+	if(numNodes > 0) {
+		double yamlData;
+		// The number of nodes is, at least, one
+		for (uint8_t i = 0; i < (uint8_t)numNodes; i++) {
+			nh.param<double>("/turtle_client/node" + std::to_string(i) + "/x", yamlData, 5.5444);
+			_pose.x = yamlData;
+			nh.param<double>("/turtle_client/node" + std::to_string(i) + "/y", yamlData, 5.5444);
+			_pose.y = yamlData;
+			nh.param<double>("/turtle_client/node" + std::to_string(i) + "/theta", yamlData, 0.0);
+			_pose.theta = yamlData;
 
+			goal.pose.push_back(_pose);
+		}
+	}
+	
 	goal.path_length = goal.pose.size();
-
+	
 	ac.sendGoal(
 		goal,
 		boost::bind(&TurtleClient::doneCb, this, _1, _2),
 		boost::bind(&TurtleClient::activeCb, this),
 		boost::bind(&TurtleClient::feedbackCb, this, _1)
 	);
-	/*
-	// wait for the action to return
-	bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
-
-	if (finished_before_timeout) {
-		actionlib::SimpleClientGoalState state = ac.getState();
-		ROS_INFO("Action finished: %s",state.toString().c_str());
-	} else
-		ROS_INFO("Action did not finish before the time out.");
-	*/
 }
 
 
