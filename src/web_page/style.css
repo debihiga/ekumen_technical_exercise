@@ -3,7 +3,7 @@
 }
 body {
 	margin: 0;
-	padding: 0;
+	padding: 3px;
 	background: #333;
 }
 .mainTitle {
@@ -12,7 +12,7 @@ body {
 .percent-count {
 	width: 450px;
 	height: 20px;
-	margin: 100px auto;
+	margin: 20px auto;
 	font-size: 50px;
 	text-align: center;
 	color: #fff;
@@ -26,7 +26,7 @@ body {
 	margin: 50px auto;
 }
 .progress {
-	width: 275px;
+	width: 0px;
 	height: 20px;
 	border-radius: 10px;
 	background-color: dodgerblue;

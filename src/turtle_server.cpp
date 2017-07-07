@@ -6,57 +6,10 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double topLimit) {
 
 	ros::topic::waitForMessage<turtlesim::Pose>("/turtle1/pose");
 
-	geometry_msgs::Twist velMsg;
-	velMsg.linear.x = 0;
-	velMsg.linear.y = 0;
-	velMsg.linear.z = 0;
-	velMsg.angular.x = 0;
-	velMsg.angular.y = 0;
-	velMsg.angular.z = 0;
+	if(! TurtleServer::orientTurtle(pose)) return false;
+	if(! TurtleServer::moveToGoal(pose, topLimit)) return false;
 
-	double targetAngle = TurtleServer::getAngleDiff(pose);
-
-	ROS_INFO("\nTurtle going from [%f,%f,%f] to [%f,%f,%f]\n",
-		this->pose.x, this->pose.y, this->pose.theta,
-		pose.x, pose.y, targetAngle);
-
-	while( fabs(targetAngle - this->pose.theta) > angTol) {
-
-		state == RESUME ? velMsg.angular.z = this->angVel * (fabsf(targetAngle - this->pose.theta)) : velMsg.angular.z = 0;
-		
-		twistPub.publish(velMsg);
-	}
-
-	velMsg.angular.z = 0;
-	twistPub.publish(velMsg);
-	double maxDistance = TurtleServer::getDistance(pose);
-
-	while(TurtleServer::getDistance(pose) >= this->tolerance) {
-
-		// Implements a proportional controller
-		// Linear velocity
-		state == RESUME ? velMsg.linear.x = this->maxVel * TurtleServer::getDistance(pose) : velMsg.linear.x = 0;
-		
-		// Publish velocity
-		twistPub.publish(velMsg);
-
-		feedback.progress = (topLimit - (TurtleServer::getDistance(pose) * topLimit / maxDistance));
-		state == RESUME ? feedback.state = "RUNNING" : feedback.state = "PAUSE";
-		as.publishFeedback(feedback);
-
-		// Check for ROS kill
-		if(!ros::ok()) {
-			ROS_INFO("%s Shutting Down", actionName.c_str());
-			return false;
-		}
-
-		ros::Duration(0.1).sleep();
-	}
-
-	// Stop the turtlesim
-	velMsg.linear.x = 0;
-	velMsg.angular.z = 0;
-	twistPub.publish(velMsg);
+	TurtleServer::stopTurtle();
 
 	return true;
 }
@@ -73,15 +26,18 @@ void TurtleServer::executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr
 	bool success = true;	
 	
 	uint8_t path_len = goal->path_length;
-	ROS_INFO("path length : %d", path_len);
 
 	if (path_len) {
 
 		uint8_t i = 0;
 
+		feedback.progress = 0.00;
+		feedback.state = "RUNNING";
+		as.publishFeedback(feedback);
+
 		for(std::vector<turtlesim::Pose>::const_iterator it = goal->pose.begin(); it != goal->pose.end(); ++it)
 		{
-			success = TurtleServer::goToGoal(*it, (double)(i+1)/path_len);
+			success = TurtleServer::goToGoal(*it, (double)1/path_len);
 			i++;
 			if (!success)	break;
 		}

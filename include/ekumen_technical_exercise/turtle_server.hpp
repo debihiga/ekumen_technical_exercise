@@ -39,8 +39,9 @@ protected:
 	dynamic_reconfigure::Server<ekumen_technical_exercise::turtleMaxVelocityConfig>::CallbackType cb;
 	double maxVel;
 	double angVel;
-	double tolerance;
+	double distTol;
 	double angTol;
+	double prevProgress;
 	simState state;
 public:
 	// Constructor & destructor
@@ -57,6 +58,11 @@ public:
 	double getAngleDiff(turtlesim::Pose&);
 	double goToGoal(turtlesim::Pose, double);
 	double wrapAngle(double);
+	void emptyVelMsg(geometry_msgs::Twist&);
+	bool orientTurtle(turtlesim::Pose&);
+	bool moveToGoal(turtlesim::Pose&, double&);
+	void stopTurtle(void);
+	void updateProgress(turtlesim::Pose&, double&, double&);
 };
 
 TurtleServer::TurtleServer()
@@ -71,12 +77,13 @@ TurtleServer::TurtleServer(std::string name)
 		_1), 
 	false),							// auto start
   actionName(name),
-  tolerance(0.3),
+  distTol(1e-3),
+  angTol(1e-4),
   state(RESUME),
   cb(boost::bind(&TurtleServer::dynamicReconfigureCb, this, _1, _2)),
   maxVel(1.0),
   angVel(1.5),
-  angTol(0.001) {
+  prevProgress(0.0) {
 
 	as.start(); // auto_start = false
 
@@ -98,7 +105,8 @@ double TurtleServer::getDistance(turtlesim::Pose &pose) {
 
 	return std::sqrt(
 		std::pow((pose.x - this->pose.x),2) 
-		+ std::pow((pose.y - this->pose.y),2));
+		+ std::pow((pose.y - this->pose.y),2))
+	*cos(TurtleServer::getAngleDiff(pose));
 }
 
 double TurtleServer::getAngleDiff(turtlesim::Pose& pose) {
@@ -109,7 +117,7 @@ double TurtleServer::getAngleDiff(turtlesim::Pose& pose) {
 	// Set maximum value
 	if (angle > 2*PI) angle = 2*PI;
 
-	return angle;
+	return fabs(angle - this->pose.theta);
 }
 
 double TurtleServer::wrapAngle(double angle) {
@@ -139,14 +147,7 @@ bool TurtleServer::pauseCb(
 	
 	state = PAUSE;
 
-	geometry_msgs::Twist velMsg;
-	velMsg.linear.x = 0;
-	velMsg.linear.y = 0;
-	velMsg.linear.z = 0;
-	velMsg.angular.x = 0;
-	velMsg.angular.y = 0;
-	velMsg.angular.z = 0;
-	twistPub.publish(velMsg);
+	TurtleServer::stopTurtle();
 
 	return true;
 }
@@ -160,4 +161,89 @@ void TurtleServer::dynamicReconfigureCb(
 	this->angVel = config.ang_vel;
 
 	ROS_INFO("Reconfigure Request: [%f, %f]", config.max_vel, config.ang_vel);
+}
+
+void TurtleServer::emptyVelMsg(geometry_msgs::Twist& msg) {
+	msg.linear.x = 0;
+	msg.linear.y = 0;
+	msg.linear.z = 0;
+	msg.angular.x = 0;
+	msg.angular.y = 0;
+	msg.angular.z = 0;
+}
+
+bool TurtleServer::orientTurtle(turtlesim::Pose &_pose) {
+	// Rotate the robot pointing to the goal
+	geometry_msgs::Twist velMsg;
+	TurtleServer::emptyVelMsg(velMsg);
+	
+	double angleDiff = TurtleServer::getAngleDiff(_pose);
+
+	ROS_INFO("\nTurtle going from [%f,%f] to [%f,%f]\n",
+		this->pose.x, this->pose.y, _pose.x, _pose.y);
+
+	while( angleDiff > angTol) {
+
+		state == RESUME ? velMsg.angular.z = this->angVel * angleDiff : velMsg.angular.z = 0;
+		
+		twistPub.publish(velMsg);
+
+		// Check for ROS kill
+		if(!ros::ok() || !nh.ok()) {
+			ROS_INFO("%s Shutting Down", actionName.c_str());
+			return false;
+		}
+
+		angleDiff = TurtleServer::getAngleDiff(_pose);
+	}
+
+	velMsg.angular.z = 0;
+	twistPub.publish(velMsg);
+
+	return true;
+}
+
+
+bool TurtleServer::moveToGoal(turtlesim::Pose &pose, double &topLimit) {
+	geometry_msgs::Twist velMsg;
+	TurtleServer::emptyVelMsg(velMsg);
+
+	double maxDistance = TurtleServer::getDistance(pose);
+
+	while(TurtleServer::getDistance(pose) >= this->distTol) {
+
+		// Implements a proportional controller
+		// Linear velocity
+		state == RESUME ? velMsg.linear.x = this->maxVel * TurtleServer::getDistance(pose) : velMsg.linear.x = 0;
+		
+		// Publish velocity
+		twistPub.publish(velMsg);
+
+		TurtleServer::updateProgress(pose, topLimit, maxDistance);
+
+		// Check for ROS kill
+		if(!ros::ok() || !nh.ok()) {
+			ROS_INFO("%s Shutting Down", actionName.c_str());
+			return false;
+		}
+		//ros::Duration(0.1).sleep();
+	}
+	prevProgress = feedback.progress;
+	return true;
+}
+
+
+void TurtleServer::stopTurtle() {
+	// Stop the turtlesim	
+	geometry_msgs::Twist velMsg;
+	TurtleServer::emptyVelMsg(velMsg);
+	twistPub.publish(velMsg);
+}
+
+
+void TurtleServer::updateProgress(turtlesim::Pose &pose, double &topLimit, double &maxDistance) {
+	//feedback.progress = topLimit * (1 - (TurtleServer::getDistance(pose) / maxDistance));
+	feedback.progress = prevProgress + topLimit * (1 - (TurtleServer::getDistance(pose) / maxDistance));
+	state == RESUME ? feedback.state = "RUNNING" : feedback.state = "PAUSE";
+	as.publishFeedback(feedback);
 }

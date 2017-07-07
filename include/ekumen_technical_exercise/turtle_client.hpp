@@ -33,10 +33,10 @@ TurtleClient::TurtleClient(std::string name)
   ac("turtle_action", true) {
 
   	// Get connection to a server
-	ROS_INFO("%s Waiting For Server...", actionName.c_str());
+	ROS_INFO("%s Waiting For Server...\n", actionName.c_str());
 
 	// wait for the action server to start
 	ac.waitForServer(); //will wait for infinite time
 
-	ROS_INFO("%s started, sending goal.", actionName.c_str());
+	ROS_INFO("%s started, sending goal.\n", actionName.c_str());
 }

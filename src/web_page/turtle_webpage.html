@@ -37,12 +37,11 @@
 
       turtlePose.subscribe(function(message) {
           //console.log('Received message on' + turtlePose.name + ': [' + message.x + ', ' + message.y + ']');
-          /*
-          points = points + "," + message.x*50 
-                          + "," + message.y*50;
-          */
-          points = points + "," + message.x*50 + "," + message.y*50;
-          //console.log(points);
+          
+          var x = message.x * 50;
+          var y = 500 - message.y * 50;
+
+          points = points + "," + x + "," + y;
 
           d3.select("#path").selectAll("svg").remove();
 

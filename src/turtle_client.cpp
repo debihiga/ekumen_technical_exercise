@@ -14,7 +14,7 @@ void TurtleClient::doneCb(
 
 void TurtleClient::activeCb() {
 // Called once when the goal becomes active
-	ROS_INFO("> Performing path\n");
+	//ROS_INFO("> Performing path\n");
 }
 
 void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackConstPtr& feedback) {
@@ -33,8 +33,7 @@ void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackCon
 		}
 		std::cout << "] " << int(feedback->progress * 100.00) << " %\r";
 		std::cout.flush();
-	} else {
-		std::cout << std::endl;
+		std::cout << std::endl << std::endl;
 	}
 }
 
@@ -49,7 +48,7 @@ void TurtleClient::setGoal() {
 		ROS_ERROR("> Error retrieving path parameters : %f", numNodes);
 		return;
 	} else {
-		ROS_INFO("> Nodes found : %f\n", numNodes);
+		//ROS_INFO("> Nodes found : %f\n", numNodes);
 	}
 	
 	if(numNodes > 0) {
