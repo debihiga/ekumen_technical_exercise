@@ -75,7 +75,7 @@ TurtleServer::TurtleServer(std::string name)
   state(RESUME),
   cb(boost::bind(&TurtleServer::dynamicReconfigureCb, this, _1, _2)),
   maxVel(1.0),
-  angVel(0.4),
+  angVel(1.5),
   angTol(0.001) {
 
 	as.start(); // auto_start = false

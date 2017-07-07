@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- The next two lines bring in the JavaScript files that support rosbridge integration -->
+    <!-- EventEmitter2 is the sole dependency of roslibjs -->
+    <script type="text/javascript" 
+            src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script>
+    <!-- Roslibjs handles core ROS functionality in the browser -->
+    <script type="text/javascript" 
+            src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
+    <script type="text/javascript" 
+            type="text/javascript"></script>
+
+    <!-- load the d3.js library --> 
+    <script type="text/javascript" 
+            src="http://d3js.org/d3.v3.min.js"></script>
+    
+    <script>
+
+      var points = "277.22,277.22";
+
+      // Create a ROS node that communicates with the rosbridge server through the computer port 9090
+      var ros = new ROSLIB.Ros({
+        url : 'ws://localhost:9090'
+      });
+
+      // These lines create a topic object as defined by roslibjs
+      var turtlePose = new ROSLIB.Topic({
+          ros : ros,
+          name : '/turtle1/pose',
+          messageType : 'turtlesim/Pose'
+      })
+
+      turtlePose.subscribe(function(message) {
+          //console.log('Received message on' + turtlePose.name + ': [' + message.x + ', ' + message.y + ']');
+          /*
+          points = points + "," + message.x*50 
+                          + "," + message.y*50;
+          */
+          points = points + "," + message.x*50 + "," + message.y*50;
+          //console.log(points);
+
+          d3.select("#path").selectAll("svg").remove();
+
+          var svgContainer = d3.select("#path")
+                            .append("svg")
+                            .attr("width",500)
+                            .attr("height",500);
+
+          svgContainer.append("polyline")
+                      .style("stroke", "lightgoldenrodyellow")
+                      .style("stroke-width","5")
+                      .style("stroke-linecap","round")
+                      .style("fill", "none")
+                      .attr("points",points);
+      });
+
+      var feedback = new ROSLIB.Topic({
+          // https://jsfiddle.net/kimmobrunfeldt/k5v2d0rr/
+          ros : ros,
+          name : '/turtle_action/feedback',
+          messageType : 'ekumen_technical_exercise/TurtleActionFeedback'
+      });
+
+      feedback.subscribe(function(message){
+          var progress = message.feedback.progress.toFixed(2);
+          //console.log(progress);
+
+          var fbProgress = document.getElementById('percentCount');
+          fbProgress.innerHTML = (progress*100).toFixed(0) + '%';
+
+          var fbBar = document.getElementById('progress');
+          fbBar.style.width = progress*500 + 'px';
+      });
+
+    </script>
+
+  </head>
+
+  <body>
+    <h1 class="mainTitle">Ekumen Technical Exercise</h1>
+
+    <div id="percentCount" class="percent-count"></div>    
+
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <div class=pathBox id="path"></div>
+
+  </body>
+</html>

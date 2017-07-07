@@ -9,7 +9,7 @@ void TurtleClient::doneCb(
 	
 	//ROS_INFO("Finished in state [%s]", state.toString().c_str());
 	//ROS_INFO("Result: %d", result->ok);
-	ROS_INFO("> Reached goal\n");
+	//ROS_INFO("> Reached goal\n");
 }
 
 void TurtleClient::activeCb() {
@@ -18,7 +18,24 @@ void TurtleClient::activeCb() {
 }
 
 void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackConstPtr& feedback) {
-	ROS_INFO("progress: %.2f\n", feedback->progress);
+	//ROS_INFO("progress: %.2f\n", feedback->progress);
+	// Prints the progress bar
+	// https://stackoverflow.com/a/14539953
+	if(feedback->progress <= 1.0) {
+		int barWidth = 70;
+
+		std::cout << "[";
+		int pos = barWidth * feedback->progress;
+		for (int i = 0; i < barWidth; ++i) {
+			if (i < pos) std::cout << "="; 
+			else if (i == pos) std::cout << ">";
+			else std::cout << " ";
+		}
+		std::cout << "] " << int(feedback->progress * 100.00) << " %\r";
+		std::cout.flush();
+	} else {
+		std::cout << std::endl;
+	}
 }
 
 void TurtleClient::setGoal() {

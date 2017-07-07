@@ -2,7 +2,7 @@
 #include "ekumen_technical_exercise/turtle_server.hpp"
 
 
-double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
+double TurtleServer::goToGoal(turtlesim::Pose pose, double topLimit) {
 
 	ros::topic::waitForMessage<turtlesim::Pose>("/turtle1/pose");
 
@@ -40,7 +40,7 @@ double TurtleServer::goToGoal(turtlesim::Pose pose, double min_progress) {
 		// Publish velocity
 		twistPub.publish(velMsg);
 
-		feedback.progress = (min_progress - TurtleServer::getDistance(pose) / maxDistance)*100;
+		feedback.progress = (topLimit - (TurtleServer::getDistance(pose) * topLimit / maxDistance));
 		state == RESUME ? feedback.state = "RUNNING" : feedback.state = "PAUSE";
 		as.publishFeedback(feedback);
 
@@ -93,7 +93,7 @@ void TurtleServer::executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr
 	// Publish the result if the goal wasn't preempted
 	result.result = success;
 	if (success) {
-		feedback.progress = 100.00;
+		feedback.progress = 1.00;
 		feedback.state = "PATH COMPLETED";
 		as.publishFeedback(feedback);
 		as.setSucceeded(result);

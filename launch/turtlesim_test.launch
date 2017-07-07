@@ -25,4 +25,10 @@
 
 	</node>
 
+	<!-- Run rosbridge and open a WebSocket on port 9090 that the web page will use to communicate with ROS -->
+	<node
+		pkg="rosbridge_server"
+		type="rosbridge_websocket"
+		name="rosbridge_websocket" />
+
 </launch>
