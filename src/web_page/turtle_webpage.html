@@ -32,8 +32,11 @@
       var turtlePose = new ROSLIB.Topic({
           ros : ros,
           name : '/turtle1/pose',
-          messageType : 'turtlesim/Pose'
+          messageType : 'turtlesim/Pose',
+          queue_size : 1
       })
+
+      var counter = 0;
 
       turtlePose.subscribe(function(message) {
           //console.log('Received message on' + turtlePose.name + ': [' + message.x + ', ' + message.y + ']');
@@ -41,21 +44,28 @@
           var x = message.x * 50;
           var y = 500 - message.y * 50;
 
-          points = points + "," + x + "," + y;
+          if (counter >= 100) {
+            points = points + "," + x + "," + y;
 
-          d3.select("#path").selectAll("svg").remove();
 
-          var svgContainer = d3.select("#path")
-                            .append("svg")
-                            .attr("width",500)
-                            .attr("height",500);
+            d3.select("#path").selectAll("svg").remove();
 
-          svgContainer.append("polyline")
-                      .style("stroke", "lightgoldenrodyellow")
-                      .style("stroke-width","5")
-                      .style("stroke-linecap","round")
-                      .style("fill", "none")
-                      .attr("points",points);
+            var svgContainer = d3.select("#path")
+                              .append("svg")
+                              .attr("width",500)
+                              .attr("height",500);
+
+            svgContainer.append("polyline")
+                        .style("stroke", "lightgoldenrodyellow")
+                        .style("stroke-width","5")
+                        .style("stroke-linecap","round")
+                        .style("fill", "none")
+                        .attr("points",points);
+
+              counter = 0;
+            } else {
+              counter = counter + 1;
+            }
       });
 
       var feedback = new ROSLIB.Topic({
@@ -65,15 +75,17 @@
           messageType : 'ekumen_technical_exercise/TurtleActionFeedback'
       });
 
+
       feedback.subscribe(function(message){
           var progress = message.feedback.progress.toFixed(2);
           //console.log(progress);
-
+          
           var fbProgress = document.getElementById('percentCount');
           fbProgress.innerHTML = (progress*100).toFixed(0) + '%';
-
           var fbBar = document.getElementById('progress');
           fbBar.style.width = progress*500 + 'px';
+          var fbState = document.getElementById('progress-state');
+          fbState.innerHTML = message.feedback.state;
       });
 
     </script>
@@ -83,10 +95,12 @@
   <body>
     <h1 class="mainTitle">Ekumen Technical Exercise</h1>
 
-    <div id="percentCount" class="percent-count"></div>    
-
-    <div class="progress-bar">
-      <div class="progress" id="progress"></div>
+    <div progress-information>
+        <div class="progress-state" id="progress-state">RUNNING</div>
+        <div class="progress-bar">
+          <div class="progress" id="progress"></div>
+        </div>
+        <div id="percentCount" class="percent-count">0 %</div>
     </div>
 
     <div class=pathBox id="path"></div>

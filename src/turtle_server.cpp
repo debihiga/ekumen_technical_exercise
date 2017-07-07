@@ -37,8 +37,16 @@ void TurtleServer::executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr
 
 		for(std::vector<turtlesim::Pose>::const_iterator it = goal->pose.begin(); it != goal->pose.end(); ++it)
 		{
-			success = TurtleServer::goToGoal(*it, (double)1/path_len);
+			success = TurtleServer::goToGoal(*it, (double)1/path_len);	
+			if (!i) {
+				std_srvs::Empty::Request req;
+				std_srvs::Empty::Response res;
+				if(!srvClear.call(req,res)) {
+					ROS_ERROR("\nFailed to call service \"clear\"");
+				}
+			}
 			i++;
+
 			if (!success)	break;
 		}
 

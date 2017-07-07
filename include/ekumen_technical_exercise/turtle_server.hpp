@@ -12,6 +12,7 @@
 #include <turtlesim/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Vector3.h>
+// rosservice call /clear "{}"
 #include <std_srvs/Empty.h>
 
 #define PI 3.14159265
@@ -35,6 +36,7 @@ protected:
 	ros::Publisher twistPub;
 	ros::ServiceServer srvPause;
 	ros::ServiceServer srvResume;
+	ros::ServiceClient srvClear;
 	dynamic_reconfigure::Server<ekumen_technical_exercise::turtleMaxVelocityConfig> server;
 	dynamic_reconfigure::Server<ekumen_technical_exercise::turtleMaxVelocityConfig>::CallbackType cb;
 	double maxVel;
@@ -84,6 +86,8 @@ TurtleServer::TurtleServer(std::string name)
   maxVel(1.0),
   angVel(1.5),
   prevProgress(0.0) {
+
+  	srvClear = nh.serviceClient<std_srvs::Empty>("clear");
 
 	as.start(); // auto_start = false
 

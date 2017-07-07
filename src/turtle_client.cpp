@@ -5,7 +5,7 @@
 void TurtleClient::doneCb(
 	const actionlib::SimpleClientGoalState& state, 
 	const ekumen_technical_exercise::TurtleResultConstPtr& result) {
-// Called once when the goal completes
+	// Called once when the goal completes
 	
 	//ROS_INFO("Finished in state [%s]", state.toString().c_str());
 	//ROS_INFO("Result: %d", result->ok);
@@ -33,6 +33,7 @@ void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackCon
 		}
 		std::cout << "] " << int(feedback->progress * 100.00) << " %\r";
 		std::cout.flush();
+	} else {
 		std::cout << std::endl << std::endl;
 	}
 }
