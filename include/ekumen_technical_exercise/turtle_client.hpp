@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ros/ros.h>
+// Actionlib files
 #include <ekumen_technical_exercise/TurtleAction.h>
 #include <actionlib/client/simple_action_client.h>
 
@@ -10,6 +11,7 @@
 class TurtleClient
 {
 public:
+	// Constructors
 	TurtleClient();
 	TurtleClient(std::string);
 	// Functions

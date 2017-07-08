@@ -1,0 +1,45 @@
+num_nodes: 11
+node0:
+  x: 10.00
+  y: 5.5444
+  theta: 0.00
+node1:
+  x: 4.17
+  y: 9.78
+  theta: 0.00
+node2:
+  x: 1.95
+  y: 2.93
+  theta: 0.00
+node3:
+  x: 9.15
+  y: 2.93
+  theta: 0.00
+node4:
+  x: 6.93
+  y: 9.78
+  theta: 0.00
+node5:
+  x: 1.15
+  y: 5.5444
+  theta: 0.00
+node6:
+  x: 6.93
+  y: 1.32
+  theta: 0.00
+node7:
+  x: 9.15
+  y: 8.17
+  theta: 0.00
+node8:
+  x: 1.95
+  y: 8.17
+  theta: 0.00
+node9:
+  x: 4.75
+  y: 1.32
+  theta: 0.00
+node10:
+  x: 10.00
+  y: 5.5444
+  theta: 0.00

@@ -35,6 +35,7 @@ void TurtleClient::feedbackCb(const ekumen_technical_exercise::TurtleFeedbackCon
 		std::cout.flush();
 	} else {
 		std::cout << std::endl << std::endl;
+		ROS_INFO("\nTurtlesim finished the path correctly\n");
 	}
 }
 

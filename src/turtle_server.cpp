@@ -19,9 +19,6 @@ void TurtleServer::executeCb(const ekumen_technical_exercise::TurtleGoalConstPtr
 	// If the server has been killed, don't process
 	if(!as.isActive()||as.isPreemptRequested()) return;
 
-	// Run the processing at 100Hz
-	ros::Rate rate(100);
-
 	// Setup some local variables
 	bool success = true;	
 	

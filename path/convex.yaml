@@ -1,0 +1,37 @@
+num_nodes: 9
+node0:
+  x: 7.78
+  y: 7.77
+  theta: 0.00
+node1:
+  x: 5.544
+  y: 10.00
+  theta: 0.00
+node2:
+  x: 1.10
+  y: 7.77
+  theta: 0.00
+node3:
+  x: 3.32
+  y: 7.77
+  theta: 0.00
+node4:
+  x: 3.32
+  y: 3.32
+  theta: 0.00
+node5:
+  x: 1.1
+  y: 3.32
+  theta: 0.00
+node6:
+  x: 5.55
+  y: 1.1
+  theta: 0.00
+node7:
+  x: 7.78
+  y: 3.32
+  theta: 0.00
+node8:
+  x: 7.78
+  y: 7.77
+  theta: 0.00

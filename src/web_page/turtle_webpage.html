@@ -21,8 +21,9 @@
     
     <script>
 
-      var points = "277.22,277.22";
-
+      var points;
+      var firstTime = true;
+      
       // Create a ROS node that communicates with the rosbridge server through the computer port 9090
       var ros = new ROSLIB.Ros({
         url : 'ws://localhost:9090'
@@ -36,40 +37,41 @@
           queue_size : 1
       })
 
-      var counter = 0;
-
       turtlePose.subscribe(function(message) {
           //console.log('Received message on' + turtlePose.name + ': [' + message.x + ', ' + message.y + ']');
-          
+
+          // The "*50" operation is do it in order to show the path in a windows of 500x500px
           var x = message.x * 50;
+          // The 'y' is shown inverted if we don't include the "500 -"
           var y = 500 - message.y * 50;
 
-          if (counter >= 100) {
-            points = points + "," + x + "," + y;
 
+          if (firstTime == false) {
+              // We execute it if we have previous points
+              
+              points = points + "," + x + "," + y;
+              // Remove the previous drawing and draw on the same spot
+              d3.select("#path").selectAll("svg").remove();
 
-            d3.select("#path").selectAll("svg").remove();
-
-            var svgContainer = d3.select("#path")
-                              .append("svg")
-                              .attr("width",500)
-                              .attr("height",500);
-
-            svgContainer.append("polyline")
-                        .style("stroke", "lightgoldenrodyellow")
-                        .style("stroke-width","5")
-                        .style("stroke-linecap","round")
-                        .style("fill", "none")
-                        .attr("points",points);
-
-              counter = 0;
-            } else {
-              counter = counter + 1;
-            }
+              var svgContainer = d3.select("#path")
+                                .append("svg")
+                                .attr("width",500)
+                                .attr("height",500);
+              // Draw the complete path
+              svgContainer.append("polyline")
+                          .style("stroke", "lightgoldenrodyellow")
+                          .style("stroke-width","5")
+                          .style("stroke-linecap","round")
+                          .style("fill", "none")
+                          .attr("points", points);
+          } else {
+              // We measure points for the first time
+              points = x + "," + y;
+              firstTime = false;
+          }
       });
 
       var feedback = new ROSLIB.Topic({
-          // https://jsfiddle.net/kimmobrunfeldt/k5v2d0rr/
           ros : ros,
           name : '/turtle_action/feedback',
           messageType : 'ekumen_technical_exercise/TurtleActionFeedback'
@@ -77,13 +79,17 @@
 
 
       feedback.subscribe(function(message){
+          // Receives the feedback messages
           var progress = message.feedback.progress.toFixed(2);
           //console.log(progress);
           
-          var fbProgress = document.getElementById('percentCount');
+          // Prints the progress in numbers
+          var fbProgress = document.getElementById('progress-count');
           fbProgress.innerHTML = (progress*100).toFixed(0) + '%';
+          // Moves the progress bar
           var fbBar = document.getElementById('progress');
           fbBar.style.width = progress*500 + 'px';
+          // Change the state text
           var fbState = document.getElementById('progress-state');
           fbState.innerHTML = message.feedback.state;
       });
@@ -95,12 +101,12 @@
   <body>
     <h1 class="mainTitle">Ekumen Technical Exercise</h1>
 
-    <div progress-information>
+    <div class="progress-information">
         <div class="progress-state" id="progress-state">RUNNING</div>
         <div class="progress-bar">
           <div class="progress" id="progress"></div>
         </div>
-        <div id="percentCount" class="percent-count">0 %</div>
+        <div id="progress-count" class="progress-count">0 %</div>
     </div>
 
     <div class=pathBox id="path"></div>

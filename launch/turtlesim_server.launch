@@ -15,6 +15,7 @@
 		output="screen" />
 
 	<!-- Dynamic reconfigure of Turtlesim velocity -->
+	<!-- setting the parameter "required" to "false", means that can be closed and the program continues working-->
 	<node 
 		pkg="rqt_reconfigure" 
 		name="rqt_reconfigure" 

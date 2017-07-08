@@ -1,0 +1,59 @@
+<launch>
+
+	<!-- Path parameters :
+		can be modified by the user using the terminal window -->
+	<arg
+		name="path"
+		default="line"
+	/>
+
+	<arg
+		name="path_file"
+		default="$(find ekumen_technical_exercise)/path/$(arg path).yaml"
+	/>
+
+	<arg
+		name="new_window"
+		default="false"
+	/>
+
+	<!-- Launch action client test 
+		Depending on the value of "new_window", this node can be launched in a new terminal -->
+
+	<group if="$(arg new_window)">
+		<!-- The command "launch-prefix" is responsible of open the node on a new terminal -->
+		<node
+			pkg="ekumen_technical_exercise"
+			type="turtle_client"
+			name="turtle_client"
+			output="screen"
+			launch-prefix="gnome-terminal -e">
+
+			<!-- Command that load the path -->
+			<rosparam 
+				command="load" 
+				file="$(arg path_file)"/>
+		</node>
+	</group>
+	<group unless="$(arg new_window)">
+		<!-- The node is opened in the same terminal window -->
+		<node
+			pkg="ekumen_technical_exercise"
+			type="turtle_client"
+			name="turtle_client"
+			output="screen">
+
+			<!-- Load path -->
+			<rosparam 
+				command="load" 
+				file="$(arg path_file)"/>
+		</node>
+	</group>
+
+	<!-- Run rosbridge and open a WebSocket on port 9090 that the web page will use to communicate with ROS -->
+	<node
+		pkg="rosbridge_server"
+		type="rosbridge_websocket"
+		name="rosbridge_websocket" />
+
+</launch>

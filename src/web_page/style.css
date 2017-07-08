@@ -6,6 +6,7 @@ body {
 	padding: 3px;
 	background: #333;
 }
+/* "Ekumen Technical Exercise" */
 .mainTitle {
 	color: mintcream;
 	margin-left: 5px;
@@ -13,19 +14,13 @@ body {
 .progress-state {
 	width: 506px;
 	height: auto;
-	margin: auto;
+	/*margin: auto;*/
 	padding-left: 150px;
 	font-size: 20px;
 	color: mediumturquoise;
 	font-weight: bold;
-}
-.percent-count {
-	width: auto;
-	height: 55px;
-	font-size: 50px;
-	text-align: center;
-	color: #fff;
-	float: right;
+
+	float: top;
 }
 .progress-bar {
 	width: 506px;
@@ -33,14 +28,24 @@ body {
 	background-color: #bbb;
 	border-radius: 13px;
 	padding: 3px;
-	float: left;
 	margin: 20px;
+	float: left;
 }
 .progress {
 	width: 0px;
 	height: 20px;
 	border-radius: 10px;
 	background-color: dodgerblue;
+}
+.progress-count {
+	width: auto;
+	height: 55px;
+	font-size: 50px;
+	text-align: center;
+	color: #fff;
+	/*float: right;*/
+
+	float: left;
 }
 .pathBox {
 	width: 450px;

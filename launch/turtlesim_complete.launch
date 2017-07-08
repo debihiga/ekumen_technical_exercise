@@ -1,0 +1,24 @@
+<launch>
+
+	<!--
+		This file launchs both, the server and the client at the same time
+	-->
+
+	<!-- We can select the desired path through the terminal window -->
+	<arg name="path" default="line" />
+	<!-- It's recommended not change this argument -->
+	<arg name="new_window" default="true" />
+
+	<!-- Launch the server launch file -->
+	<include 
+		file="$(find ekumen_technical_exercise)/launch/turtlesim_server.launch"
+	/>
+
+	<!-- Also lauch the client file -->
+	<include
+		file="$(find ekumen_technical_exercise)/launch/turtlesim_client.launch"
+		pass_all_args="true">
+
+	</include>
+
+</launch>
