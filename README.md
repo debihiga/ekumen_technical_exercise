@@ -156,7 +156,7 @@ If you can't see the simulation, reload it.
 
 If everything is configured correctly, you'll see a screen like this:
 
-![Web browser](doc/web-browser-png)
+![Web browser](doc/web-browser.png)
 
 Remember to install the `rosbridge_server package`. Instructions are at the top of the document.
 
