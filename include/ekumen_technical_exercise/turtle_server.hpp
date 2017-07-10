@@ -118,21 +118,16 @@ double TurtleServer::getDistance(turtlesim::Pose &pose) {
 }
 
 double TurtleServer::getAngleDiff(turtlesim::Pose& pose) {
+	// Angle between target and robot
 	double angle =  std::atan2(
 		(pose.y - this->pose.y), (pose.x - this->pose.x));
-	// Converts from [-PI;PI] to [0;2*PI]
-	if (angle < 0) angle += 2*PI;
-	// Set maximum value
-	if (angle > 2*PI) angle = 2*PI;
-
-	return fabs(angle - this->pose.theta);
+	
+	return angle - this->pose.theta;
 }
 
 double TurtleServer::wrapAngle(double angle) {
-	// Wrap angle between [0;2PI]
-	angle = std::fmod(angle, 2*PI); 
- 	if (angle < 0)	angle += 2*PI;
- 	return angle;
+	// Wrap angle between [-PI;PI]
+	return std::fmod(angle + PI, 2*PI) - PI;
 }
 
 void TurtleServer::turtlePoseCb(const turtlesim::Pose::ConstPtr& msg) {
@@ -195,7 +190,7 @@ bool TurtleServer::orientTurtle(turtlesim::Pose &_pose) {
 	ROS_INFO("\nTurtle going from [%f,%f] to [%f,%f]\n",
 		this->pose.x, this->pose.y, _pose.x, _pose.y);
 
-	while( angleDiff > angTol) {
+	while( fabs(angleDiff) > angTol) {
 		// Proportional controller IF THE SIMULATION IS NOT PAUSED
 		state == RESUME ? velMsg.angular.z = this->angVel * angleDiff : velMsg.angular.z = 0;
 		

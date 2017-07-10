@@ -164,5 +164,5 @@ Remember to install the `rosbridge_server package`. Instructions are at the top 
 
 Some improvements can be made:
 
- - Currently, the robot moves only in one direction (anticlockwise). To save time, it should move clockwise sometimes.
+ - Teleport turtle to the initial position.
  - The robot doesn't perform angular and linear movements simultaneously because it only follows straight paths.
